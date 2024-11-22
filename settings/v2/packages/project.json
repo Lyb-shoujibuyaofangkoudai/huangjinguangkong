@@ -1,0 +1,28 @@
+{
+  "__version__": "1.0.6",
+  "general": {
+    "designResolution": {
+      "width": 720,
+      "height": 1280,
+      "fitHeight": true,
+      "fitWidth": false
+    }
+  },
+  "physics": {
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "GOLDS"
+      },
+      {
+        "index": 2,
+        "name": "ROCK"
+      }
+    ],
+    "collisionMatrix": {
+      "0": 7,
+      "1": 7,
+      "2": 7
+    }
+  }
+}

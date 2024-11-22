@@ -22,7 +22,6 @@ export class Hook extends Component {
     private maxRotateAngle: number = 45;
 
     private hookMaxLength = 800; // 钩子最大长度
-    private hookOriginalPos = null
     private hookCanRotate = true
     private ropeTween = null; // 绳子变长动画缓动
     private ropeTweenReverse = null // 绳子变短动画缓动
@@ -31,7 +30,6 @@ export class Hook extends Component {
     private timeScale = 0.5 //  ropeDuration 的时间缩放 1为正常，0.5为半速，大于1为加速
 
     start() {
-        this.hookOriginalPos = this.hookNode.position.clone()
         this.hookMaxLength = this.itemBgNode.getComponent(UITransform).height
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
         this.registerRopeTween()
@@ -52,11 +50,10 @@ export class Hook extends Component {
     // 让钩子旋转
     rotateHook(dt) {
         if ( !this.hookCanRotate ) return
-        // console.log("钩子旋转角度：",this.hookContainer.angle)
         if ( this.hookContainer.angle >= this.maxRotateAngle ) {
             this.rotateSpeed = -this.rotateSpeed;
         } else if ( this.hookContainer.angle <= -this.maxRotateAngle ) {
-            this.rotateSpeed = -this.rotateSpeed;
+            this.rotateSpeed = Math.abs(this.rotateSpeed);
         }
         // console.log("旋转速度：",this.rotateSpeed)
         this.hookContainer.angle += this.rotateSpeed * dt;
@@ -112,7 +109,6 @@ export class Hook extends Component {
         tween(itemCollder.node)
             .call(() => {
                 itemCollder.node.setParent(this.hookContainer,true)
-                itemCollder.node.setPosition(0,0)
                 itemCollder.node.setRotation(hookNodeCollder.node.rotation)
             })
             .to(this.ropeDuration, { position: this.hookNodeInGoldsNodePos })

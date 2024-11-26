@@ -1,8 +1,7 @@
-import { _decorator, Collider2D, Component, Contact2DType,Tween, input, Input, Node, tween, UITransform, Vec3 } from 'cc';
-import { ITEM_VALUE } from '../utils/constant';
-
+import { _decorator, Collider2D, Component, Script,Contact2DType,Tween, input, Input, Node, tween, UITransform, Vec3 } from 'cc';
+import { CUS_EVENT_TYPE, ITEM_VALUE } from '../utils/constant';
+import { Game } from './Game';
 const { ccclass, property } = _decorator;
-
 @ccclass('Hook')
 export class Hook extends Component {
     @property(Node)
@@ -12,7 +11,7 @@ export class Hook extends Component {
     @property(Node)
     private hookNode = null
     @property(Node)
-    private goldsNode = null;
+    private gameNode: Node = null;
     @property(Node)
     private itemBgNode: Node = null;
 
@@ -20,6 +19,7 @@ export class Hook extends Component {
     private rotateSpeed: number = 60;
     @property
     private maxRotateAngle: number = 45;
+
 
     private hookMaxLength = 800; // 钩子最大长度
     private hookCanRotate = true
@@ -34,6 +34,7 @@ export class Hook extends Component {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
         this.registerRopeTween()
         this.registerHookCollision()
+
     }
 
 
@@ -51,7 +52,7 @@ export class Hook extends Component {
     rotateHook(dt) {
         if ( !this.hookCanRotate ) return
         if ( this.hookContainer.angle >= this.maxRotateAngle ) {
-            this.rotateSpeed = -this.rotateSpeed;
+            this.rotateSpeed = -Math.abs(this.rotateSpeed);
         } else if ( this.hookContainer.angle <= -this.maxRotateAngle ) {
             this.rotateSpeed = Math.abs(this.rotateSpeed);
         }
@@ -95,10 +96,14 @@ export class Hook extends Component {
     hookLengthen() {
         this.ropeTween.start()
     }
+    // 绳子停止变长
+    hookRopeStop() {
+        this.ropeTween.pause()
+    }
 
     // 抓到物品 拉回
     async pullBackItems(hookNodeCollder, itemCollder) {
-        this.ropeTween.pause() // 绳子停止变长
+        this.hookRopeStop()
         const itemInfo = ITEM_VALUE[itemCollder.node.name]
         if(itemInfo) {
             this.timeScale = itemInfo.timeScale
@@ -113,6 +118,12 @@ export class Hook extends Component {
             })
             .to(this.ropeDuration, { position: this.hookNodeInGoldsNodePos })
             .timeScale(this.timeScale)
+            .call(() => {
+                this.gameNode.getComponent(Game).calcScore(itemInfo.value)
+                if(itemInfo.addTime) {
+                    this.gameNode.getComponent(Game).addTime(itemInfo.addTime)
+                }
+            })
             .removeSelf()
             .start()
     }

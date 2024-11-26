@@ -22,3 +22,7 @@ export const ITEM_VALUE = {
         timeScale: 1.5,
     },
 }
+
+export const CUS_EVENT_TYPE = {
+    CALC_SCORE: 'calcScore',
+}

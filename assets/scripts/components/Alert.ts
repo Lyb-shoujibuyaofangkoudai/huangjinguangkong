@@ -52,11 +52,10 @@ export class alert extends Component {
     }
 
     handleConfirm(e,str) {
-        console.log("确认",e,str)
         director.loadScene("Game")
     }
     handleCancel(e,str) {
-        console.log("取消",e,str)
+        director.end()
     }
 }
 

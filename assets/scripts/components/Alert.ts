@@ -27,7 +27,6 @@ export class alert extends Component {
     }
 
     openPopup() {
-        console.log("打开弹窗")
         if (!this.popupNode) {
             console.error('Popup node is not assigned!');
             return;

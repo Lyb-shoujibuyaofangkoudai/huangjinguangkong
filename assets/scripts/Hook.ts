@@ -44,6 +44,7 @@ export class Hook extends Component {
 
 
     onTouchStart() {
+        if(!this.hookCanRotate) return
         this.hookLengthen()
         this.hookNodeInGoldsNodePos = this.hookNode.position.clone()
     }
@@ -66,12 +67,12 @@ export class Hook extends Component {
             .to(this.ropeDuration, { height: this.hookRopeNode.height })
             .call(() => {
                 this.ropeTweenReverse.stop()
-                this.hookCanRotate = true
+                this.handleHookCanRotate(true)
             })
 
         this.ropeTween = tween(this.hookRopeNode)
             .call(() => {
-                this.hookCanRotate = false
+                this.handleHookCanRotate(false)
             })
             .to(this.ropeDuration, { height: this.hookMaxLength })
             .then(this.ropeTweenReverse)
@@ -99,6 +100,9 @@ export class Hook extends Component {
     // 绳子停止变长
     hookRopeStop() {
         this.ropeTween.pause()
+    }
+    handleHookCanRotate(canRotate:boolean) {
+        this.hookCanRotate = canRotate
     }
 
     // 抓到物品 拉回

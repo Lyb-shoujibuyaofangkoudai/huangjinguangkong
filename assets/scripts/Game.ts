@@ -16,6 +16,10 @@ export class Game extends Component {
     @property({ type: Prefab })
     private rockPrefab = null
     @property(Node)
+    private hookContainerNode = null
+    @property(Node)
+    private goldsNode = null
+    @property(Node)
     private itemContainer: Node = null // 金子（物品）容器
     @property(Node)
     private scoreNode = null; // 得分节点
@@ -27,7 +31,7 @@ export class Game extends Component {
     @property({ type: Boolean })
     private isDebug = false;
 
-    private countdown = 2
+    private countdown = 1
     private score = 0
     private targetScore = 100
     private countdownTimer = null
@@ -78,9 +82,11 @@ export class Game extends Component {
             const y = randomInt(-200, -this.itemContainer.getComponent(UITransform).height + 200)
             let position = new Vec3(x, y, 0)
             let itemNode = randomInt(0, 10) < 5 ? this.createRockPrefab(position) : this.createGoldPrefab(position, prefabItem)
-            this.node.addChild(itemNode)
+            this.goldsNode.addChild(itemNode)
         }
     }
+
+
 
 
     createGoldPrefab(position, goldItem) {
@@ -109,12 +115,11 @@ export class Game extends Component {
     }
 
     checkScoreIsEnough() {
+        Tween.stopAll()
+        this.hookContainerNode?.getComponent("Hook")?.handleHookCanRotate(false)
         if(this.score < this.targetScore) {
-            Tween.stopAll()
             this.openPopup(DescType.FAIL)
-
         } else if(this.score >= this.targetScore) {
-            Tween.stopAll()
             this.openPopup(DescType.SUCCESS)
         }
     }
